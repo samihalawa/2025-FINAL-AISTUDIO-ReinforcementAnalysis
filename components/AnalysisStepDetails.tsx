@@ -18,7 +18,7 @@ export const PhaseDetails: React.FC<PhaseDetailsProps> = ({ phase, analysisHasRu
         const timer = setTimeout(() => {
             setVisiblePhase(phase);
             setIsFading(false);
-        }, 300); // Animation duration
+        }, 200); 
         return () => clearTimeout(timer);
     } else if (!phase && visiblePhase) {
         setVisiblePhase(null);
@@ -27,11 +27,13 @@ export const PhaseDetails: React.FC<PhaseDetailsProps> = ({ phase, analysisHasRu
   
   if (!analysisHasRun) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-8">
-        <AnalysisIcon className="w-12 h-12 text-zinc-400 mb-4" />
-        <h3 className="text-lg font-semibold text-text-primary">Reinforcement Analysis AI</h3>
-        <p className="mt-1 text-sm text-text-secondary max-w-sm">
-          Enter any query, problem, or idea. The AI will apply a dynamic, multi-phase reasoning process to provide a detailed, actionable analysis.
+      <div className="flex flex-col items-center justify-center h-full text-center max-w-lg mx-auto">
+        <div className="bg-slate-50 p-6 rounded-full mb-6">
+            <AnalysisIcon className="w-16 h-16 text-slate-300" />
+        </div>
+        <h3 className="text-2xl font-semibold text-text-primary tracking-tight">Ready to Organize & Analyze</h3>
+        <p className="mt-3 text-base text-text-secondary leading-relaxed">
+          Enter a complex task or problem on the left. The AI will break it down into actionable phases, helping you get things done with clarity and precision.
         </p>
       </div>
     );
@@ -39,11 +41,13 @@ export const PhaseDetails: React.FC<PhaseDetailsProps> = ({ phase, analysisHasRu
 
   if (!visiblePhase) {
      return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-8 animate-fade-in-up">
-        <SparklesIcon className="w-12 h-12 text-indigo-400 mb-4" />
-        <h3 className="text-lg font-semibold text-text-primary">Analysis Complete</h3>
-        <p className="mt-1 text-sm text-text-secondary max-w-sm">
-          Select a phase from the tracker below to view its detailed results.
+      <div className="flex flex-col items-center justify-center h-full text-center animate-fade-in-up max-w-md mx-auto">
+        <div className="bg-sky-50 p-4 rounded-full mb-4">
+             <SparklesIcon className="w-8 h-8 text-sky-500" />
+        </div>
+        <h3 className="text-xl font-semibold text-text-primary">Analysis Complete</h3>
+        <p className="mt-2 text-sm text-text-secondary">
+          The reasoning engine has finished processing. Select a phase from the timeline above to review the detailed output.
         </p>
       </div>
     );
@@ -52,18 +56,23 @@ export const PhaseDetails: React.FC<PhaseDetailsProps> = ({ phase, analysisHasRu
   const contentToDisplay = visiblePhase.content || '';
 
   return (
-    <div className={`h-full flex flex-col transition-opacity duration-300 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+    <div className={`h-full flex flex-col transition-opacity duration-200 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
         <div className="flex-1 flex flex-col overflow-hidden">
-            <h3 className="text-xl font-bold text-text-primary">{visiblePhase.name}</h3>
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-sky-100 text-sky-600 text-sm font-bold">
+                    {visiblePhase.id.replace('phase', '')}
+                </span>
+                <h3 className="text-xl font-bold text-text-primary tracking-tight">{visiblePhase.name}</h3>
+            </div>
 
-            <div className="mt-6 flex-1 overflow-y-auto pr-2">
+            <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
               <FormattedContent content={contentToDisplay} />
             </div>
 
             {visiblePhase.error && (
-                <div className="mt-4 bg-red-100 border border-red-200 text-red-700 p-4 rounded-md">
-                    <p className="font-semibold">An error occurred:</p>
-                    <p className="text-sm mt-1 font-mono">{visiblePhase.error}</p>
+                <div className="mt-6 bg-rose-50 border border-rose-100 text-rose-700 p-4 rounded-xl text-sm">
+                    <p className="font-semibold mb-1">Attention Needed</p>
+                    <p>{visiblePhase.error}</p>
                 </div>
             )}
         </div>

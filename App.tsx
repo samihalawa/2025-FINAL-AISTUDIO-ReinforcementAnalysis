@@ -8,16 +8,16 @@ import { generateReport } from './services/reportService';
 import { FileUpload } from './components/FileUpload';
 
 const EXAMPLE_PROMPTS = [
-  "Choose the best domain from a list for a tech startup",
+  "Agent Debugging and Deployment Audit",
+  "AI Agent Forensic Analysis Report",
+  "Choose the best domain for a tech startup",
   "Design MCP tools for an email client",
   "How to scale my database",
   "Microservices vs monolith",
   "Validate my startup idea",
   "Grow my user base",
   "UI/UX improvement ideas",
-  "Troubleshoot a system failure",
-  "Resolve team conflicts",
-  "Create a content strategy plan"
+  "Troubleshoot a system failure"
 ];
 
 export default function App() {
@@ -68,7 +68,7 @@ export default function App() {
 
   const handleStartAnalysis = async () => {
     if (userInput.trim() === '' && files.length === 0) {
-      setError("Please enter a query or upload a file to begin analysis.");
+      setError("Please enter a query or upload a file.");
       setAppState('error');
       return;
     }
@@ -96,7 +96,7 @@ export default function App() {
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : "An unknown error occurred during analysis.";
        if (errorMessage.includes('API key not valid')) {
-         setError("The API key is invalid or missing required permissions. Please check your configuration.");
+         setError("The API key is invalid or missing required permissions.");
       } else {
          setError(errorMessage);
       }
@@ -113,14 +113,18 @@ export default function App() {
   }, [phases, selectedPhaseId]);
 
   const InputPanel = () => (
-    <div className="flex flex-col h-full p-6 space-y-4 overflow-y-auto">
-        <h2 className="text-lg font-semibold text-text-primary">Your Query</h2>
+    <div className="flex flex-col h-full p-8 space-y-6 overflow-y-auto">
+        <div>
+          <h2 className="text-xl font-medium text-text-primary mb-1">New Analysis</h2>
+          <p className="text-sm text-text-tertiary">Input your query context below.</p>
+        </div>
+
         <textarea
             rows={6}
             name="user-input"
             id="user-input"
-            className="block w-full rounded-md border-0 py-2.5 px-3.5 text-text-primary shadow-sm ring-1 ring-inset ring-black/10 placeholder:text-text-tertiary focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 disabled:opacity-60 disabled:cursor-not-allowed transition-colors bg-white/50"
-            placeholder="e.g., 'Analyze these logs for errors' or 'Critique my business plan'"
+            className="block w-full rounded-xl border-0 py-4 px-4 text-text-primary shadow-sm ring-1 ring-inset ring-slate-200 placeholder:text-text-tertiary focus:ring-2 focus:ring-inset focus:ring-sky-200 sm:text-sm sm:leading-6 disabled:opacity-60 disabled:cursor-not-allowed transition-all bg-slate-50 hover:bg-white resize-none"
+            placeholder="Describe the task or problem you want to analyze..."
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             disabled={isLoading}
@@ -135,14 +139,14 @@ export default function App() {
         />
 
         <div>
-          <h3 className="text-sm font-medium text-text-secondary mb-2">Or, try an example...</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-text-tertiary mb-3">Quick Prompts</h3>
           <div className="flex flex-wrap gap-2">
             {EXAMPLE_PROMPTS.map(prompt => (
               <button 
                 key={prompt}
                 onClick={() => setUserInput(prompt)}
                 disabled={isLoading}
-                className="px-3 py-1 bg-white/60 text-xs text-text-secondary rounded-full hover:bg-indigo-100 hover:text-indigo-700 transition-colors ring-1 ring-inset ring-black/5 disabled:opacity-60"
+                className="px-3 py-1.5 bg-white text-xs font-medium text-text-secondary rounded-full hover:bg-sky-50 hover:text-sky-600 transition-colors border border-slate-200 disabled:opacity-50"
               >
                 {prompt}
               </button>
@@ -150,41 +154,41 @@ export default function App() {
           </div>
         </div>
         
-         <div className="pt-4 mt-auto space-y-4">
-          {error && !isLoading && <p className="text-sm text-red-600">{error}</p>}
+         <div className="pt-2 mt-auto space-y-3">
+          {error && !isLoading && <p className="text-sm text-rose-500 bg-rose-50 p-3 rounded-lg border border-rose-100">{error}</p>}
           <button
               onClick={handleStartAnalysis}
               disabled={(userInput.trim() === '' && files.length === 0) || isLoading}
-              className="relative overflow-hidden w-full flex items-center justify-center gap-2 bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2 bg-sky-500 text-white font-medium py-3 px-6 rounded-full shadow-sm hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-400 active:scale-[0.98]"
           >
               {isLoading ? (
                   <>
-                      <SpinnerIcon className="h-5 w-5"/>
-                      Analyzing...
+                      <SpinnerIcon className="h-5 w-5 text-white"/>
+                      <span className="ml-2">Processing...</span>
                   </>
               ) : (
                  <>
-                  <SparklesIcon className="w-5 h-5" />
-                  <span>Run Analysis</span>
+                  <SparklesIcon className="w-4 h-4" />
+                  <span>Start Reasoning</span>
                  </>
               )}
           </button>
 
           {analysisHasRun && (
-            <div className="flex items-center gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <button
                   onClick={startNewAnalysis}
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-1.5 text-sm bg-indigo-600/10 text-indigo-600 font-medium hover:bg-indigo-600/20 hover:text-indigo-700 transition-colors py-2 rounded-lg"
+                  className="w-full flex items-center justify-center gap-2 text-sm bg-white text-slate-600 border border-slate-200 font-medium hover:bg-slate-50 transition-colors py-2.5 rounded-full"
               >
-                  <XMarkIcon className="w-4 h-4" /> New Analysis
+                  <XMarkIcon className="w-4 h-4" /> Reset
               </button>
               <button
                   onClick={handleDownloadReport}
                   disabled={isLoading || appState !== 'complete'}
-                  className="w-full flex items-center justify-center gap-1.5 text-sm bg-indigo-600/10 text-indigo-600 font-medium hover:bg-indigo-600/20 hover:text-indigo-700 transition-colors py-2 rounded-lg disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 text-sm bg-white text-slate-600 border border-slate-200 font-medium hover:bg-slate-50 transition-colors py-2.5 rounded-full disabled:opacity-50"
               >
-                  <DownloadIcon /> Download Report
+                  <DownloadIcon /> Export
               </button>
             </div>
           )}
@@ -193,41 +197,51 @@ export default function App() {
   );
 
   return (
-    <div className="p-0 sm:p-4 md:p-6 h-full w-full flex items-center justify-center overflow-hidden">
-      <div className="w-full h-full sm:rounded-2xl flex flex-col overflow-hidden relative">
-          <div className={`aurora aurora-idle ${appState === 'idle' ? 'opacity-100' : 'opacity-0'}`}></div>
-          <div className={`aurora aurora-loading ${appState === 'loading' ? 'opacity-100' : 'opacity-0'}`}></div>
-          <div className={`aurora aurora-complete ${appState === 'complete' ? 'opacity-100' : 'opacity-0'}`}></div>
-          <div className={`aurora aurora-error ${appState === 'error' ? 'opacity-100' : 'opacity-0'}`}></div>
+    <div className="h-full w-full flex items-center justify-center overflow-hidden bg-slate-50/50">
+      <div className="w-full h-full max-w-[1600px] flex flex-col overflow-hidden relative">
 
-        <header className="flex items-center justify-between h-16 px-6 shrink-0 z-20 select-none glass-panel !rounded-b-none !border-b-0">
-            <div className="flex items-center space-x-2">
-                <AppLogo />
-                <h1 className="text-md font-semibold text-text-primary hidden sm:block">Reinforcement Analysis AI</h1>
+        <header className="flex items-center justify-between h-20 px-8 shrink-0 z-20 select-none">
+            <div className="flex items-center space-x-3">
+                <div className="bg-white p-2 rounded-xl shadow-sm border border-slate-100">
+                  <AppLogo />
+                </div>
+                <div>
+                  <h1 className="text-lg font-semibold text-text-primary tracking-tight">Reinforcement AI</h1>
+                  <p className="text-xs text-text-tertiary">Reasoning Engine v3.0</p>
+                </div>
             </div>
-            <div className="flex items-center text-sm font-medium text-text-secondary">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-slate-200 text-xs font-medium text-text-secondary shadow-sm">
                 <GeminiLogo />
                 <span>Powered by Gemini 3</span>
             </div>
         </header>
 
-        <main className="flex-1 grid lg:grid-cols-[minmax(320px,420px)_1fr] overflow-hidden z-10 p-4 sm:p-6 gap-6">
-            <aside className="glass-panel">
+        <main className="flex-1 grid lg:grid-cols-[400px_1fr] overflow-hidden z-10 px-8 pb-8 gap-8">
+            <aside className="clean-panel h-full overflow-hidden">
                 <InputPanel />
             </aside>
 
-            <section className="flex flex-col gap-6 overflow-hidden">
-                <div className="flex-1 glass-panel overflow-hidden p-6 md:p-8">
-                    <PhaseDetails 
-                      phase={activePhase}
-                      analysisHasRun={analysisHasRun}
-                    />
-                </div>
-                {analysisHasRun && (
-                  <div className="shrink-0 glass-panel p-4 animate-fade-in-up">
+            <section className="flex flex-col gap-6 overflow-hidden h-full">
+               {analysisHasRun ? (
+                 <>
+                  <div className="shrink-0 clean-panel p-6 bg-white flex items-center animate-fade-in-up">
                       <PhaseTracker phases={phases} onPhaseSelect={setSelectedPhaseId} activePhaseId={activePhase?.id || null} />
                   </div>
-                )}
+                  <div className="flex-1 clean-panel overflow-hidden p-8 md:p-10 bg-white relative">
+                      <PhaseDetails 
+                        phase={activePhase}
+                        analysisHasRun={analysisHasRun}
+                      />
+                  </div>
+                 </>
+               ) : (
+                  <div className="flex-1 clean-panel overflow-hidden p-8 md:p-10 bg-white flex items-center justify-center">
+                       <PhaseDetails 
+                        phase={activePhase}
+                        analysisHasRun={analysisHasRun}
+                      />
+                  </div>
+               )}
             </section>
         </main>
       </div>

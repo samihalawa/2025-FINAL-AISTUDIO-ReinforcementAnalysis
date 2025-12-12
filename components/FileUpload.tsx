@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { UploadedFile } from '../types';
 import { FileIcon } from './icons';
@@ -47,37 +45,36 @@ export const FileUpload: React.FC<FileUploadProps> = ({ files, onFilesChange, on
     <div className="w-full">
       <label 
         htmlFor="file-upload" 
-        className={`relative cursor-pointer bg-white/30 rounded-xl flex flex-col items-center justify-center p-6 group transition-all duration-200 ${isLoading ? 'opacity-60 cursor-not-allowed' : ''} ${isDragging ? 'ring-indigo-500/70 shadow-lg shadow-indigo-500/10' : 'hover:bg-white/60'}`}
+        className={`relative cursor-pointer bg-slate-50/50 rounded-xl flex flex-col items-center justify-center p-6 group transition-all duration-300 border border-dashed ${isLoading ? 'opacity-60 cursor-not-allowed border-slate-200' : ''} ${isDragging ? 'border-sky-400 bg-sky-50/30' : 'border-slate-300 hover:border-sky-300 hover:bg-slate-50'}`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        <div className={`absolute inset-0 rounded-xl ring-1 ring-inset transition-all duration-200 ${isDragging ? 'ring-indigo-400/70' : 'ring-black/5 group-hover:ring-black/10'}`}></div>
         <div className="flex flex-col items-center justify-center text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className={`h-10 w-10 transition-colors ${isDragging ? 'text-indigo-500' : 'text-zinc-500 group-hover:text-indigo-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            <svg xmlns="http://www.w3.org/2000/svg" className={`h-8 w-8 mb-2 transition-colors ${isDragging ? 'text-sky-500' : 'text-slate-300 group-hover:text-sky-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
             </svg>
-            <span className="mt-2 text-sm font-medium text-text-secondary">
-                <span className="text-indigo-500">Click to upload</span> or drag and drop
+            <span className="text-sm font-medium text-text-secondary">
+                <span className="text-sky-500 underline decoration-sky-200 hover:decoration-sky-400 underline-offset-2">Upload files</span> or drag here
             </span>
-            <span className="mt-1 text-xs text-text-tertiary">TXT or JSONL files</span>
+            <span className="mt-1 text-[10px] text-text-tertiary uppercase tracking-wide">TXT or JSONL</span>
         </div>
         <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple onChange={handleFileChange} disabled={isLoading} accept=".txt,.jsonl,text/plain,application/jsonl" />
       </label>
 
       {files.length > 0 && (
-        <div className="mt-4">
+        <div className="mt-3">
           <ul className="space-y-2">
             {files.map((uploadedFile) => (
-              <li key={uploadedFile.id} className="flex items-center justify-between bg-white/40 p-2 pl-3 rounded-lg text-sm text-text-primary group ring-1 ring-inset ring-black/5">
+              <li key={uploadedFile.id} className="flex items-center justify-between bg-white p-2 pl-3 rounded-lg border border-slate-100 shadow-sm text-sm text-text-primary group">
                 <div className="flex items-center overflow-hidden">
                     <FileIcon />
-                    <span className="truncate ml-1">{uploadedFile.file.name}</span>
+                    <span className="truncate ml-2 text-slate-600 font-medium">{uploadedFile.file.name}</span>
                 </div>
                 <button
                   onClick={() => onFileRemove(uploadedFile.id)}
-                  className="p-1.5 rounded-md text-zinc-500 hover:text-red-500 hover:bg-red-500/10 disabled:opacity-50 transition-colors"
+                  className="p-1.5 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 disabled:opacity-50 transition-colors"
                   disabled={isLoading}
                   aria-label={`Remove ${uploadedFile.file.name}`}
                 >

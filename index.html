@@ -5,21 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reinforcement Analysis AI | Gemini</title>
     <meta name="description" content="An advanced multi-phase reasoning system that deconstructs any input into a comprehensive 7-phase analysis, delivering validated and actionable outcomes.">
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#ffffff">
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='logo-gradient' x1='0' y1='0' x2='32' y2='32' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%2338bdf8'/%3E%3Cstop offset='1' stop-color='%234f46e5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 3L3 9.75V22.25L16 29L29 22.25V9.75L16 3Z' stroke='url(%23logo-gradient)' stroke-width='1.5'/%3E%3Cpath d='M16 17.5V29L29 22.25V9.75L16 17.5Z' fill='%234f46e5' fill-opacity='0.1'/%3E%3Cpath d='M16 17.5L3 9.75L16 3L29 9.75L16 17.5Z' fill='%2338bdf8' fill-opacity='0.2' stroke='url(%23logo-gradient)' stroke-width='1.5'/%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 3L3 9.75V22.25L16 29L29 22.25V9.75L16 3Z' fill='%2338bdf8' fill-opacity='0.1' stroke='%2338bdf8' stroke-width='1.5'/%3E%3Cpath d='M16 17.5V29L29 22.25V9.75L16 17.5Z' fill='%2338bdf8' fill-opacity='0.3'/%3E%3Cpath d='M16 17.5L3 9.75L16 3L29 9.75L16 17.5Z' stroke='%2338bdf8' stroke-width='1.5'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root {
-        --bg-color: #F3F4F6;
-        --panel-bg: rgba(255, 255, 255, 0.6);
-        --border-color: rgba(0, 0, 0, 0.08);
-        --text-primary: #1F2937;
-        --text-secondary: #4B5563;
-        --text-tertiary: #6B7280;
+        --bg-color: #F8FAFC; /* Slate 50 */
+        --panel-bg: #FFFFFF;
+        --border-color: #F1F5F9; /* Slate 100 */
+        --text-primary: #334155; /* Slate 700 */
+        --text-secondary: #64748B; /* Slate 500 */
+        --text-tertiary: #94A3B8; /* Slate 400 */
+        --accent-primary: #38BDF8; /* Sky 400 */
+        --accent-soft: #E0F2FE; /* Sky 100 */
       }
       html, body, #root {
         height: 100%;
@@ -27,73 +29,55 @@
         padding: 0;
         background-color: var(--bg-color);
         color: var(--text-primary);
+        font-family: 'Inter', sans-serif;
       }
       body {
         overscroll-behavior: contain;
         -webkit-tap-highlight-color: transparent;
       }
-      .glass-panel {
+      
+      /* Clean Card Style */
+      .clean-panel {
         background: var(--panel-bg);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
         border: 1px solid var(--border-color);
-        border-radius: 1rem;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        transition: box-shadow 0.2s ease-in-out;
       }
-      .aurora {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        pointer-events: none;
-        background-position: center;
-        background-size: 200% 200%;
-        transition: opacity 1.5s ease-in-out;
-        mix-blend-mode: multiply;
-        opacity: 0;
-      }
-      .aurora-idle {
-         background-image: radial-gradient(ellipse at 10% 20%, rgba(129, 140, 248, 0.4), transparent 50%),
-                           radial-gradient(ellipse at 90% 10%, rgba(56, 189, 248, 0.4), transparent 50%);
-      }
-      .aurora-loading {
-         background-image: radial-gradient(ellipse at 50% 50%, rgba(79, 70, 229, 0.5), transparent 70%),
-                           radial-gradient(ellipse at 20% 90%, rgba(129, 140, 248, 0.3), transparent 70%);
-         animation: pulse-aurora 6s infinite ease-in-out;
-      }
-       .aurora-complete {
-         background-image: radial-gradient(ellipse at 80% 80%, rgba(52, 211, 153, 0.5), transparent 60%),
-                           radial-gradient(ellipse at 20% 10%, rgba(96, 165, 250, 0.4), transparent 60%);
-      }
-      .aurora-error {
-         background-image: radial-gradient(ellipse at 50% 50%, rgba(239, 68, 68, 0.4), transparent 60%);
+      
+      .clean-panel:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
       }
 
-      @keyframes pulse-aurora {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+      /* Custom Scrollbar for cleaner look */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
       }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #CBD5E1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94A3B8;
+      }
+
       @keyframes fade-in-up {
         from {
           opacity: 0;
-          transform: translateY(20px) scale(0.98);
+          transform: translateY(10px);
         }
         to {
           opacity: 1;
-          transform: translateY(0) scale(1);
+          transform: translateY(0);
         }
       }
-      @keyframes slide-in-left {
-        from {
-            opacity: 0;
-            transform: translateX(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+      
+      .animate-fade-in-up {
+        animation: fade-in-up 0.4s ease-out forwards;
       }
     </style>
     <script>
@@ -102,38 +86,25 @@
           extend: {
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
-              mono: ['Source Code Pro', 'monospace'],
+              mono: ['JetBrains Mono', 'monospace'],
             },
             colors: {
               'text-primary': 'var(--text-primary)',
               'text-secondary': 'var(--text-secondary)',
               'text-tertiary': 'var(--text-tertiary)',
-            },
-            keyframes: {
-              'pulse-glow': {
-                '0%, 100%': { 
-                  boxShadow: '0 0 0 0 rgba(129, 140, 248, 0.5)',
-                  transform: 'scale(1)',
-                 },
-                '50%': { 
-                  boxShadow: '0 0 0 10px rgba(129, 140, 248, 0)',
-                  transform: 'scale(1.05)',
-                 },
-              },
-              'fade-in-up': {
-                '0%': {
-                  opacity: '0',
-                  transform: 'translateY(20px) scale(0.98)'
-                },
-                '100%': {
-                  opacity: '1',
-                  transform: 'translateY(0) scale(1)'
-                }
+              'accent': {
+                DEFAULT: 'var(--accent-primary)',
+                soft: 'var(--accent-soft)',
               }
             },
             animation: {
-              'pulse-glow': 'pulse-glow 2.5s infinite cubic-bezier(0.4, 0, 0.6, 1)',
-              'fade-in-up': 'fade-in-up 0.5s cubic-bezier(0.215, 0.610, 0.355, 1) forwards',
+              'pulse-soft': 'pulse-soft 2s infinite ease-in-out',
+            },
+            keyframes: {
+              'pulse-soft': {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0.7 },
+              }
             }
           },
         },
@@ -150,7 +121,7 @@
 }
 </script>
 </head>
-  <body class="font-sans antialiased text-text-primary">
+  <body class="antialiased selection:bg-sky-100 selection:text-sky-900">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
