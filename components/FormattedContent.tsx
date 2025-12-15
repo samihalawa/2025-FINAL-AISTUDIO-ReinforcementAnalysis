@@ -59,7 +59,7 @@ export const FormattedContent: React.FC<FormattedContentProps> = ({ content }) =
         const lines = content.split('\n');
         const elements: React.ReactNode[] = [];
         let buffer: string[] = [];
-        let bufferType: 'p' | 'ul' | 'ol' | 'code' | 'blockquote' | null = null;
+        let bufferType: 'p' | 'ul' | 'ol' | 'code' | 'blockquote' | 'table' | null = null;
         
         const flushBuffer = () => {
             if (buffer.length === 0) return;
@@ -83,7 +83,7 @@ export const FormattedContent: React.FC<FormattedContentProps> = ({ content }) =
                     const codeBlockContent = buffer.join('\n');
                     elements.push(
                         <div key={key} className="relative group my-4">
-                            <pre className="bg-gray-900 text-gray-200 p-4 rounded-lg border border-transparent overflow-x-auto text-sm">
+                            <pre className="bg-slate-900 text-slate-200 p-4 rounded-xl border border-transparent overflow-x-auto text-sm shadow-sm">
                                <code className="font-mono">{codeBlockContent}</code>
                             </pre>
                             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
@@ -92,13 +92,50 @@ export const FormattedContent: React.FC<FormattedContentProps> = ({ content }) =
                         </div>
                     );
                     break;
+                case 'table':
+                    // Parse table rows
+                     const tableRows = buffer.map(row => 
+                        row.trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim())
+                    );
+                    
+                    // We expect at least header and separator
+                    if (tableRows.length >= 2) {
+                        const header = tableRows[0];
+                        // The second row is usually separator "---", ignore it for display
+                        const body = tableRows.slice(2);
+                        
+                         elements.push(
+                            <div key={key} className="my-6 w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm text-left text-slate-600">
+                                        <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                                            <tr>
+                                                {header.map((h, i) => <th key={i} className="px-6 py-3 font-semibold">{processLine(h).replace(/<[^>]*>/g, '')}</th>)}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {body.map((row, i) => (
+                                                <tr key={i} className="bg-white border-b border-slate-100 hover:bg-slate-50">
+                                                    {row.map((cell, j) => <td key={j} className="px-6 py-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{__html: processLine(cell)}} />)}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        );
+                    }
+                    break;
             }
             buffer = [];
             bufferType = null;
         };
 
         for (const line of lines) {
-            if (line.trim().startsWith('```')) {
+            const trimLine = line.trim();
+
+             // Code Block
+            if (trimLine.startsWith('```')) {
                 flushBuffer();
                 bufferType = bufferType === 'code' ? null : 'code';
                 continue;
@@ -107,16 +144,27 @@ export const FormattedContent: React.FC<FormattedContentProps> = ({ content }) =
                 buffer.push(line);
                 continue;
             }
-            if (line.trim().startsWith('#')) {
+            
+            // Table
+            if (trimLine.startsWith('|')) {
+                if (bufferType !== 'table') { flushBuffer(); bufferType = 'table'; }
+                buffer.push(trimLine);
+                continue;
+            }
+
+            // Headers
+            if (trimLine.startsWith('#')) {
                 flushBuffer();
                 const level = line.indexOf(' ');
                 const text = line.substring(level + 1).trim();
                 const key = `el-${elements.length}`;
-                if (level === 1) elements.push(<h1 key={key} className={`text-3xl font-bold mt-6 mb-3 ${textColors.strong}`} dangerouslySetInnerHTML={{__html: processLine(text)}} />);
-                else if (level === 2) elements.push(<h2 key={key} className={`text-2xl font-bold mt-6 mb-3 border-b pb-2 border-gray-200 ${textColors.strong}`} dangerouslySetInnerHTML={{__html: processLine(text)}} />);
-                else elements.push(<h3 key={key} className={`text-xl font-bold mt-6 mb-3 ${textColors.strong}`} dangerouslySetInnerHTML={{__html: processLine(text)}} />);
+                if (level === 1) elements.push(<h1 key={key} className={`text-2xl font-bold mt-8 mb-4 ${textColors.strong}`} dangerouslySetInnerHTML={{__html: processLine(text)}} />);
+                else if (level === 2) elements.push(<h2 key={key} className={`text-xl font-bold mt-6 mb-3 border-b pb-2 border-slate-100 ${textColors.strong}`} dangerouslySetInnerHTML={{__html: processLine(text)}} />);
+                else elements.push(<h3 key={key} className={`text-lg font-bold mt-5 mb-2 ${textColors.strong}`} dangerouslySetInnerHTML={{__html: processLine(text)}} />);
                 continue;
             }
+            
+            // List Items
             const ulMatch = line.match(/^\s*[-*]\s+(.*)/);
             if (ulMatch) {
                 if (bufferType !== 'ul') { flushBuffer(); bufferType = 'ul'; }
@@ -129,13 +177,17 @@ export const FormattedContent: React.FC<FormattedContentProps> = ({ content }) =
                 buffer.push(processLine(olMatch[1]));
                 continue;
             }
+            
+            // Blockquotes
             const bqMatch = line.match(/^\s*>\s+(.*)/);
             if (bqMatch) {
                 if (bufferType !== 'blockquote') { flushBuffer(); bufferType = 'blockquote'; }
                 buffer.push(processLine(bqMatch[1]));
                 continue;
             }
-            if (line.trim() === '') {
+            
+            // Paragraphs
+            if (trimLine === '') {
                 flushBuffer();
             } else {
                 if (bufferType !== 'p') { flushBuffer(); bufferType = 'p'; }
