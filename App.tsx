@@ -69,15 +69,19 @@ export default function App() {
   };
   
   const handleQuickPrompt = (prompt: string) => {
+    // 1. Update State
     setUserInput(prompt);
-    // Focus the textarea and set cursor to end for better UX
-    setTimeout(() => {
+
+    // 2. Robustly handle focus and cursor placement after render
+    // requestAnimationFrame ensures we wait for the next paint frame, 
+    // which usually follows the React render cycle commit.
+    requestAnimationFrame(() => {
         if (textareaRef.current) {
             textareaRef.current.focus();
-            textareaRef.current.selectionStart = prompt.length;
-            textareaRef.current.selectionEnd = prompt.length;
+            // Set selection range to the end of the text
+            textareaRef.current.setSelectionRange(prompt.length, prompt.length);
         }
-    }, 0);
+    });
   };
 
   const handleStartAnalysis = async () => {
