@@ -7,7 +7,7 @@ const SYSTEM_PROMPT = `
 **CORE TASK**: Deconstruct the user's query (and any provided file context) into a comprehensive analysis report.
 
 **REQUIREMENTS**:
-1.  **Strict Structure**: You MUST output exactly 3 to 7 distinct analysis phases.
+1.  **Strict Structure**: You MUST output EXACTLY 7 distinct analysis phases.
 2.  **Format**: 
     *   Every phase MUST start with a Markdown Header 2 like: \`## Phase 1: [Phase Name]\`.
     *   Do NOT use H1 headers.
@@ -18,13 +18,14 @@ const SYSTEM_PROMPT = `
     *   Use Markdown tables to compare options or list constraints.
     *   Use code blocks for technical strategy.
 
-**PHASE EXAMPLES**:
-- Phase 1: Intent Recognition & Context Analysis
-- Phase 2: Strategic Decomposition
-- Phase 3: Risk Assessment
-- Phase 4: Implementation Strategy
-- Phase 5: Code / Architectural Validation
-- Phase 6: Final Recommendations
+**PHASE EXAMPLES (7-Step Workflow)**:
+- Phase 1: Intent Recognition & Context Audit
+- Phase 2: Strategic Decomposition & Constraints
+- Phase 3: Risk Assessment & Threat Modeling
+- Phase 4: Architectural / Logical Strategy
+- Phase 5: Implementation & Code Validation
+- Phase 6: Optimization & Scalability Review
+- Phase 7: Final Recommendations & Executive Summary
 `;
 
 export const getInitialPhases = (): Phase[] => [];

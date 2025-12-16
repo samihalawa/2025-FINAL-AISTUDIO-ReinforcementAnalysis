@@ -19,7 +19,7 @@ const PhaseItem: React.FC<{
         : phase.name;
 
     return (
-        <li className="relative flex-1 flex flex-col items-center gap-3 text-center group z-10">
+        <li className="relative flex-1 flex flex-col items-center gap-3 text-center group z-10 min-w-[80px]">
             {/* Connector Line */}
             {index < total - 1 && (
                 <div className={`absolute top-4 left-1/2 w-full h-[2px] -z-10 ${isCompleted ? 'bg-sky-200' : 'bg-slate-100'}`}></div>
@@ -28,7 +28,7 @@ const PhaseItem: React.FC<{
             <button
                 onClick={isClickable ? onClick : undefined}
                 disabled={!isClickable}
-                className={`relative h-8 w-8 flex items-center justify-center rounded-full transition-all duration-300 border-2 
+                className={`relative h-8 w-8 flex items-center justify-center rounded-full transition-all duration-300 border-2 shrink-0
                     ${isActive 
                         ? 'border-sky-500 bg-white ring-2 ring-sky-100' 
                         : isCompleted 
@@ -50,11 +50,11 @@ const PhaseItem: React.FC<{
                 )}
             </button>
             
-            <div className={`flex flex-col items-center transition-all duration-300 ${isActive ? 'opacity-100 transform translate-y-0' : 'opacity-70 group-hover:opacity-100'}`}>
-                <h4 className={`text-[10px] uppercase tracking-wider font-bold mb-0.5 ${isActive ? 'text-sky-600' : 'text-slate-400'}`}>
+            <div className={`flex flex-col items-center transition-all duration-300 px-1 w-full ${isActive ? 'opacity-100 transform translate-y-0' : 'opacity-70 group-hover:opacity-100'}`}>
+                <h4 className={`text-[10px] uppercase tracking-wider font-bold mb-0.5 whitespace-nowrap ${isActive ? 'text-sky-600' : 'text-slate-400'}`}>
                     Phase {index + 1}
                 </h4>
-                <p className={`text-xs font-medium leading-tight max-w-[100px] ${isActive ? 'text-slate-700' : 'text-slate-500'}`}>
+                <p className={`text-xs font-medium leading-tight w-full truncate px-1 ${isActive ? 'text-slate-700' : 'text-slate-500'}`} title={displayName}>
                     {displayName}
                 </p>
             </div>
@@ -68,8 +68,9 @@ export const PhaseTracker: React.FC<{
     activePhaseId: string | null;
 }> = ({ phases, onPhaseSelect, activePhaseId }) => {
     return (
-    <nav aria-label="Analysis Pipeline" className="w-full py-2">
-         <ul className="flex items-start justify-between">
+    <nav aria-label="Analysis Pipeline" className="w-full py-2 overflow-x-auto custom-scrollbar">
+         {/* min-w ensuring responsiveness doesn't crush the timeline on mobile */}
+         <ul className="flex items-start justify-between min-w-[700px] lg:min-w-0 pb-2 lg:pb-0 px-2">
             {phases.map((phase, index) => (
               <PhaseItem
                 key={phase.id} 
